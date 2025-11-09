@@ -1843,15 +1843,20 @@ setMethod("extract", signature = className("feis", "feisr"),
 #' @noRd
 extract.betareg <- function(model, include.precision = TRUE,
                             include.pseudors = TRUE, include.loglik = TRUE,
-                            include.nobs = TRUE, ...) {
+                            include.nobs = TRUE, include.nu = TRUE, ...) {
 
   s <- summary(model, ...)
 
-  coef.block <- s$coefficients$mean
+  coef.block <- s$coefficients$mu
   if (include.precision == TRUE) {
-    phi <- s$coefficients$precision
+    phi <- s$coefficients$phi
     rownames(phi) <- paste("Precision:", rownames(phi))
     coef.block <- rbind(coef.block, phi)
+  }
+  if (include.nu == TRUE) {
+    nu <- s$coefficients$nu 
+    rownames(nu) <- paste('Exceedence:', rownames(nu))
+    coef.block <- rbind(coef.block, nu)
   }
   names <- rownames(coef.block)
   co <- coef.block[, 1]
@@ -1898,10 +1903,11 @@ extract.betareg <- function(model, include.precision = TRUE,
 #' \code{\link[betareg]{betareg}} function in the \pkg{betareg} package.
 #'
 #' @param model A statistical model object.
-#' @param include.precision Report precision in the GOF block?
+#' @param include.precision Report precision in the coef block?
 #' @param include.pseudors Report pseudo R^2 in the GOF block?
 #' @param include.loglik Report the log likelihood in the GOF block?
 #' @param include.nobs Report the number of observations in the GOF block?
+#' @param include.nu Report the exceedence in the coef block? 
 #' @param ... Custom parameters, which are handed over to subroutines, in this
 #'   case to the \code{summary} method for the object.
 #'
