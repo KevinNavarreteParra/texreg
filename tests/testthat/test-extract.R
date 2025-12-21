@@ -381,7 +381,7 @@ test_that("extract fixest objects created with the fixest package", {
   firm.eff <- rnorm(nlevels(data$firm))
   u <- rnorm(length(x))
   data$y <- with(data, x + 0.5 * x2 + id.eff[id] + firm.eff[firm] + u)
-  est <- feols(y ~ x + x2 | id + firm, data = data)
+  est <- feols(y ~ x + x2 | id + firm, vcov = "cluster", data = data)
 
   tr <- extract(est)
 
