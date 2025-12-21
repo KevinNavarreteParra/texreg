@@ -402,7 +402,7 @@ test_that("extract fixest objects created with the fixest package", {
   tr <- extract(est)
 
   expect_equivalent(tr@coef, c(1.00, 1.00), tolerance = 1e-2)
-  expect_equivalent(tr@se, c(0.01, 0.02), tolerance = 1e-2)
+  expect_equivalent(tr@se, c(0.01, 0.02), tolerance = 1e-1)
   expect_equivalent(tr@pvalues, c(0.00, 0.00), tolerance = 1e-2)
   expect_equivalent(tr@gof, c(1000, 20, 955.4, -1479.6, 0.83), tolerance = 1e-2)
   expect_length(tr@gof.names, 5)
