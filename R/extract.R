@@ -1847,14 +1847,23 @@ extract.betareg <- function(model, include.precision = TRUE,
 
   s <- summary(model, ...)
 
-  coef.block <- s$coefficients$mu
+  extended <- identical(model$dist, "xbetax") || identical(model$dist, "xbeta")
+  if (extended) {
+    coef.block <- s$coefficients$mu
+  } else {
+    coef.block <- s$coefficients$mean
+  }
   if (include.precision == TRUE) {
-    phi <- s$coefficients$phi
+    if (extended) {
+      phi <- s$coefficients$phi
+    } else {
+      phi <- s$coefficients$precision
+    }
     rownames(phi) <- paste("Precision:", rownames(phi))
     coef.block <- rbind(coef.block, phi)
   }
-  if (include.nu == TRUE) {
-    nu <- s$coefficients$nu 
+  if (include.nu == TRUE && !is.null(s$coefficients$nu)) {
+    nu <- s$coefficients$nu
     rownames(nu) <- paste('Exceedence:', rownames(nu))
     coef.block <- rbind(coef.block, nu)
   }
@@ -1866,7 +1875,7 @@ extract.betareg <- function(model, include.precision = TRUE,
   gof <- numeric()
   gof.names <- character()
   gof.decimal <- logical()
-  if (include.pseudors == TRUE) {
+  if (include.pseudors == TRUE && is.numeric(model$pseudo.r.squared)) {
     pseudors <- model$pseudo.r.squared
     gof <- c(gof, pseudors)
     gof.names <- c(gof.names, "Pseudo R$^2$")
